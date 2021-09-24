@@ -4,7 +4,7 @@ code for our architectures used for neurIPS2021 submission
 
 
 ## Running BIBAE code
-Pytoch version 1.8.0
+Pytorch version 1.8.0
 
 BIBAE_Train.py: Runfile for main BIBAE training
 
