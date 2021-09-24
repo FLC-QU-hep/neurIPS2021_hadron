@@ -35,8 +35,8 @@ def main():
         
               
               # Data paths for I/O
-              'input_path'  : '/beegfs/desy/user/diefenbs/shower_data/pion_uniform_510k_PunchThroughCut70.hdf5',
-              'output_path' : '/beegfs/desy/user/diefenbs/VAE_results/test/',
+              'input_path'  : <path>,
+              'output_path' : <path>,
               
               # Training settings. adapt to GPU setup's capabilities and available data
               'batch_size': 16,    # 
