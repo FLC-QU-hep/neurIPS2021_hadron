@@ -10,3 +10,8 @@ BIBAE_Train.py: Runfile for main BIBAE training
 
 BIBAE_PP_Train.py: Runfile for main PostProcess training
 
+## Running WGAN code
+Pytorch version 1.8.0
+
+wGAN.py: Main training file for WGAN
+regressor.py: Training file for energy-regressor 
