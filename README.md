@@ -19,24 +19,45 @@ This repository contains ingredients for repoducing *Hadrons, Better, Faster, St
 
 We use [`iLCsoft`](https://github.com/iLCSoft) ecosystem which includes `ddsim` and `Geant4`. 
 
-### Kubernetes 
-Assuming a running kubernetes cluster with volume attached, we can clone `ILDConfig` repository. 
+### Kubernetes (in our case via Rancher) 
+Assuming a running Kubernetes cluster with volume attached, we clone `ILDConfig` repository. 
 
-Let's go to a `pod` which has our volume attached
+Let's go to a `pod` which has our volume attached to `/mnt/volume/` folder
 
 ```bash
 rancher kubectl exec -it -n ilc ilcsoft-dev-c48b8775b-wjdm5 -- bash
-cd /path/to/volume/attached/
+cd /mnt/volume/
 ```
-Now we can clone the `ILDConfig` repository
+Now we can clone the `ILDConfig` repository (+ this repository!)
 
 ```bash
 git clone --branch v02-01-pre02 https://github.com/iLCSoft/ILDConfig.git
-cd ILDConfig/StandardConfig/production
+cd ./ILDConfig/StandardConfig/production
+cp ./neurIPS2021_hadron/training_data/* .
+```
+For the sake of this example, now, we can start 10 simulation jobs each generating 100 events 
+
+```bash
+## go back to your local --> neurIPS2021_hadron/training_data
+alias render_template='python -c "from jinja2 import Template; import sys; print(Template(sys.stdin.read()).render());"'
+cat sim.jinja2 | render_template > sim_jobs.yaml 
+```
+and start submitting
+
+```console
+engin@local: ~$ rancher kubectl apply -f sim_jobs.yaml -n ilc
+job.batch/pion-sim-1 created
+job.batch/pion-sim-2 created
+job.batch/pion-sim-3 created
+job.batch/pion-sim-4 created
+job.batch/pion-sim-5 created
+job.batch/pion-sim-6 created
+job.batch/pion-sim-7 created
+job.batch/pion-sim-8 created
+job.batch/pion-sim-9 created
+job.batch/pion-sim-10 created
 ```
 
-
-copy all `.py`, `.sh` , `create_root_tree.xml` and `pionGun.mac` files to this folder from `training_data` folder. 
 
 
 ## Running BIBAE code

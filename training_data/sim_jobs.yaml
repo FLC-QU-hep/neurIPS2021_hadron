@@ -1,0 +1,341 @@
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pion-sim-1
+spec:
+  template:
+    spec:
+      containers:
+      - name: photon
+        image: ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre
+        env:
+        - name: ILCSOFT_version
+          value: /home/ilc/ilcsoft/v02-01-pre
+        - name: SIM_MODEL
+          value: ILD_l5_v02
+        - name: DISK
+          value: /mnt/production_pion_hcal/ILDConfig/StandardConfig/production
+        command: ["/bin/sh", "-c"]
+        args: 
+         - source $(ILCSOFT_version)/init_ilcsoft.sh;
+           cd $(DISK);
+           echo "-- Running DDSim $(SIM_MODEL) ...";
+           ddsim --outputFile ./pion-shower-1.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ; 
+        volumeMounts:
+         - mountPath: /mnt
+           name: vol1
+      restartPolicy: Never
+      volumes:
+      - name: vol1
+        persistentVolumeClaim:
+          claimName: ilc-volume
+
+  backoffLimit: 1
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pion-sim-2
+spec:
+  template:
+    spec:
+      containers:
+      - name: photon
+        image: ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre
+        env:
+        - name: ILCSOFT_version
+          value: /home/ilc/ilcsoft/v02-01-pre
+        - name: SIM_MODEL
+          value: ILD_l5_v02
+        - name: DISK
+          value: /mnt/production_pion_hcal/ILDConfig/StandardConfig/production
+        command: ["/bin/sh", "-c"]
+        args: 
+         - source $(ILCSOFT_version)/init_ilcsoft.sh;
+           cd $(DISK);
+           echo "-- Running DDSim $(SIM_MODEL) ...";
+           ddsim --outputFile ./pion-shower-2.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ; 
+        volumeMounts:
+         - mountPath: /mnt
+           name: vol1
+      restartPolicy: Never
+      volumes:
+      - name: vol1
+        persistentVolumeClaim:
+          claimName: ilc-volume
+
+  backoffLimit: 1
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pion-sim-3
+spec:
+  template:
+    spec:
+      containers:
+      - name: photon
+        image: ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre
+        env:
+        - name: ILCSOFT_version
+          value: /home/ilc/ilcsoft/v02-01-pre
+        - name: SIM_MODEL
+          value: ILD_l5_v02
+        - name: DISK
+          value: /mnt/production_pion_hcal/ILDConfig/StandardConfig/production
+        command: ["/bin/sh", "-c"]
+        args: 
+         - source $(ILCSOFT_version)/init_ilcsoft.sh;
+           cd $(DISK);
+           echo "-- Running DDSim $(SIM_MODEL) ...";
+           ddsim --outputFile ./pion-shower-3.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ; 
+        volumeMounts:
+         - mountPath: /mnt
+           name: vol1
+      restartPolicy: Never
+      volumes:
+      - name: vol1
+        persistentVolumeClaim:
+          claimName: ilc-volume
+
+  backoffLimit: 1
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pion-sim-4
+spec:
+  template:
+    spec:
+      containers:
+      - name: photon
+        image: ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre
+        env:
+        - name: ILCSOFT_version
+          value: /home/ilc/ilcsoft/v02-01-pre
+        - name: SIM_MODEL
+          value: ILD_l5_v02
+        - name: DISK
+          value: /mnt/production_pion_hcal/ILDConfig/StandardConfig/production
+        command: ["/bin/sh", "-c"]
+        args: 
+         - source $(ILCSOFT_version)/init_ilcsoft.sh;
+           cd $(DISK);
+           echo "-- Running DDSim $(SIM_MODEL) ...";
+           ddsim --outputFile ./pion-shower-4.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ; 
+        volumeMounts:
+         - mountPath: /mnt
+           name: vol1
+      restartPolicy: Never
+      volumes:
+      - name: vol1
+        persistentVolumeClaim:
+          claimName: ilc-volume
+
+  backoffLimit: 1
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pion-sim-5
+spec:
+  template:
+    spec:
+      containers:
+      - name: photon
+        image: ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre
+        env:
+        - name: ILCSOFT_version
+          value: /home/ilc/ilcsoft/v02-01-pre
+        - name: SIM_MODEL
+          value: ILD_l5_v02
+        - name: DISK
+          value: /mnt/production_pion_hcal/ILDConfig/StandardConfig/production
+        command: ["/bin/sh", "-c"]
+        args: 
+         - source $(ILCSOFT_version)/init_ilcsoft.sh;
+           cd $(DISK);
+           echo "-- Running DDSim $(SIM_MODEL) ...";
+           ddsim --outputFile ./pion-shower-5.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ; 
+        volumeMounts:
+         - mountPath: /mnt
+           name: vol1
+      restartPolicy: Never
+      volumes:
+      - name: vol1
+        persistentVolumeClaim:
+          claimName: ilc-volume
+
+  backoffLimit: 1
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pion-sim-6
+spec:
+  template:
+    spec:
+      containers:
+      - name: photon
+        image: ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre
+        env:
+        - name: ILCSOFT_version
+          value: /home/ilc/ilcsoft/v02-01-pre
+        - name: SIM_MODEL
+          value: ILD_l5_v02
+        - name: DISK
+          value: /mnt/production_pion_hcal/ILDConfig/StandardConfig/production
+        command: ["/bin/sh", "-c"]
+        args: 
+         - source $(ILCSOFT_version)/init_ilcsoft.sh;
+           cd $(DISK);
+           echo "-- Running DDSim $(SIM_MODEL) ...";
+           ddsim --outputFile ./pion-shower-6.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ; 
+        volumeMounts:
+         - mountPath: /mnt
+           name: vol1
+      restartPolicy: Never
+      volumes:
+      - name: vol1
+        persistentVolumeClaim:
+          claimName: ilc-volume
+
+  backoffLimit: 1
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pion-sim-7
+spec:
+  template:
+    spec:
+      containers:
+      - name: photon
+        image: ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre
+        env:
+        - name: ILCSOFT_version
+          value: /home/ilc/ilcsoft/v02-01-pre
+        - name: SIM_MODEL
+          value: ILD_l5_v02
+        - name: DISK
+          value: /mnt/production_pion_hcal/ILDConfig/StandardConfig/production
+        command: ["/bin/sh", "-c"]
+        args: 
+         - source $(ILCSOFT_version)/init_ilcsoft.sh;
+           cd $(DISK);
+           echo "-- Running DDSim $(SIM_MODEL) ...";
+           ddsim --outputFile ./pion-shower-7.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ; 
+        volumeMounts:
+         - mountPath: /mnt
+           name: vol1
+      restartPolicy: Never
+      volumes:
+      - name: vol1
+        persistentVolumeClaim:
+          claimName: ilc-volume
+
+  backoffLimit: 1
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pion-sim-8
+spec:
+  template:
+    spec:
+      containers:
+      - name: photon
+        image: ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre
+        env:
+        - name: ILCSOFT_version
+          value: /home/ilc/ilcsoft/v02-01-pre
+        - name: SIM_MODEL
+          value: ILD_l5_v02
+        - name: DISK
+          value: /mnt/production_pion_hcal/ILDConfig/StandardConfig/production
+        command: ["/bin/sh", "-c"]
+        args: 
+         - source $(ILCSOFT_version)/init_ilcsoft.sh;
+           cd $(DISK);
+           echo "-- Running DDSim $(SIM_MODEL) ...";
+           ddsim --outputFile ./pion-shower-8.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ; 
+        volumeMounts:
+         - mountPath: /mnt
+           name: vol1
+      restartPolicy: Never
+      volumes:
+      - name: vol1
+        persistentVolumeClaim:
+          claimName: ilc-volume
+
+  backoffLimit: 1
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pion-sim-9
+spec:
+  template:
+    spec:
+      containers:
+      - name: photon
+        image: ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre
+        env:
+        - name: ILCSOFT_version
+          value: /home/ilc/ilcsoft/v02-01-pre
+        - name: SIM_MODEL
+          value: ILD_l5_v02
+        - name: DISK
+          value: /mnt/production_pion_hcal/ILDConfig/StandardConfig/production
+        command: ["/bin/sh", "-c"]
+        args: 
+         - source $(ILCSOFT_version)/init_ilcsoft.sh;
+           cd $(DISK);
+           echo "-- Running DDSim $(SIM_MODEL) ...";
+           ddsim --outputFile ./pion-shower-9.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ; 
+        volumeMounts:
+         - mountPath: /mnt
+           name: vol1
+      restartPolicy: Never
+      volumes:
+      - name: vol1
+        persistentVolumeClaim:
+          claimName: ilc-volume
+
+  backoffLimit: 1
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pion-sim-10
+spec:
+  template:
+    spec:
+      containers:
+      - name: photon
+        image: ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre
+        env:
+        - name: ILCSOFT_version
+          value: /home/ilc/ilcsoft/v02-01-pre
+        - name: SIM_MODEL
+          value: ILD_l5_v02
+        - name: DISK
+          value: /mnt/production_pion_hcal/ILDConfig/StandardConfig/production
+        command: ["/bin/sh", "-c"]
+        args: 
+         - source $(ILCSOFT_version)/init_ilcsoft.sh;
+           cd $(DISK);
+           echo "-- Running DDSim $(SIM_MODEL) ...";
+           ddsim --outputFile ./pion-shower-10.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ; 
+        volumeMounts:
+         - mountPath: /mnt
+           name: vol1
+      restartPolicy: Never
+      volumes:
+      - name: vol1
+        persistentVolumeClaim:
+          claimName: ilc-volume
+
+  backoffLimit: 1
