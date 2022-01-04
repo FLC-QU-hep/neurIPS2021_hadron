@@ -22,8 +22,7 @@ spec:
          - source $(ILCSOFT_version)/init_ilcsoft.sh;
            cd $(DISK);
            echo "-- Running DDSim $(SIM_MODEL) ...";
-           ddsim --outputFile ./pion-shower-{{ n }}.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ;
-           Marlin create_root_tree.xml --global.LCIOInputFiles=./pion-shower-{{ n }}.slcio --MyAIDAProcessor.FileName=pion-shower-{{ n }};
+           ddsim --outputFile ./pion-shower-{{ n }}.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ; 
         volumeMounts:
          - mountPath: /mnt
            name: vol1

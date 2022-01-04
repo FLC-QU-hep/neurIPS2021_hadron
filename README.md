@@ -22,25 +22,26 @@ We use [`iLCsoft`](https://github.com/iLCSoft) ecosystem which includes `ddsim` 
 ### Kubernetes (in our case via Rancher) 
 Assuming a running Kubernetes cluster with volume attached, we clone `ILDConfig` repository. 
 
-Let's go to a `pod` which has our volume attached to `/mnt/volume/` folder
+Let's go to a `pod` which has our volume attached to `/mnt` folder
 
 ```bash
-rancher kubectl exec -it -n ilc ilcsoft-dev-c48b8775b-wjdm5 -- bash
-cd /mnt/volume/
+engin@local: ~$ rancher kubectl exec -it -n ilc ilcsoft-dev-c48b8775b-wjdm5 -- bash
+## you're inside the container in k8s
+bash-4.2# cd /mnt
 ```
 Now we can clone the `ILDConfig` repository (+ this repository!)
 
 ```bash
-git clone --branch v02-01-pre02 https://github.com/iLCSoft/ILDConfig.git
-cd ./ILDConfig/StandardConfig/production
-cp ./neurIPS2021_hadron/training_data/* .
+bash-4.2# git clone --branch v02-01-pre02 https://github.com/iLCSoft/ILDConfig.git
+bash-4.2# cd ./ILDConfig/StandardConfig/production
+bash-4.2# cp ./neurIPS2021_hadron/training_data/* .
 ```
 For the sake of this example, now, we can start 10 simulation jobs each generating 100 events 
 
 ```bash
-## go back to your local --> neurIPS2021_hadron/training_data
-alias render_template='python -c "from jinja2 import Template; import sys; print(Template(sys.stdin.read()).render());"'
-cat sim.jinja2 | render_template > sim_jobs.yaml 
+## go back to your local
+engin@local: ~$ alias render_template='python -c "from jinja2 import Template; import sys; print(Template(sys.stdin.read()).render());"'
+engin@local: ~$ cat sim.jinja2 | render_template > sim_jobs.yaml 
 ```
 and start submitting
 
@@ -57,6 +58,13 @@ job.batch/pion-sim-8 created
 job.batch/pion-sim-9 created
 job.batch/pion-sim-10 created
 ```
+These jobs will create Linear-Collider-Input-Output (LCIO) and root files, containing all information about the event in the realistic ILD simulation.
+
+We need to do:
+
+1. Read/stream the root files and convert all calorimeter hits into `48 x 25 x 25` numpy array.
+2. Write these arrays into a `hdf5` file. 
+
 
 
 

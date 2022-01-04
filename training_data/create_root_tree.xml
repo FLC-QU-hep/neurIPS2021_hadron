@@ -16,7 +16,7 @@
  <execute>
   <processor name="MyAIDAProcessor"/>
   <processor name="MergeSimCaloHits" />
-  <processor name="photonSIM"/>  
+  <processor name="pionSIM"/>  
  </execute>
 
  <global>
@@ -35,7 +35,7 @@
   <parameter name="FileType" type="string">root </parameter>
  </processor>
 
- <processor name="photonSIM" type="LCTuple">
+ <processor name="pionSIM" type="LCTuple">
  <!--LCTuple creates a ROOT TTRee with a column wise ntuple from LCIO collections ....-->
   
   <!--Name of the MCParticle collection-->

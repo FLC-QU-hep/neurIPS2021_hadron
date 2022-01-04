@@ -8,7 +8,7 @@ spec:
   template:
     spec:
       containers:
-      - name: photon
+      - name: pion
         image: ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre
         env:
         - name: ILCSOFT_version
@@ -22,7 +22,8 @@ spec:
          - source $(ILCSOFT_version)/init_ilcsoft.sh;
            cd $(DISK);
            echo "-- Running DDSim $(SIM_MODEL) ...";
-           ddsim --outputFile ./pion-shower-1.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ; 
+           ddsim --outputFile ./pion-shower-1.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ;
+           Marlin create_root_tree.xml --global.LCIOInputFiles=./pion-shower-1.slcio --MyAIDAProcessor.FileName=pion-shower-1;
         volumeMounts:
          - mountPath: /mnt
            name: vol1
@@ -42,7 +43,7 @@ spec:
   template:
     spec:
       containers:
-      - name: photon
+      - name: pion
         image: ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre
         env:
         - name: ILCSOFT_version
@@ -56,7 +57,8 @@ spec:
          - source $(ILCSOFT_version)/init_ilcsoft.sh;
            cd $(DISK);
            echo "-- Running DDSim $(SIM_MODEL) ...";
-           ddsim --outputFile ./pion-shower-2.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ; 
+           ddsim --outputFile ./pion-shower-2.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ;
+           Marlin create_root_tree.xml --global.LCIOInputFiles=./pion-shower-2.slcio --MyAIDAProcessor.FileName=pion-shower-2;
         volumeMounts:
          - mountPath: /mnt
            name: vol1
@@ -76,7 +78,7 @@ spec:
   template:
     spec:
       containers:
-      - name: photon
+      - name: pion
         image: ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre
         env:
         - name: ILCSOFT_version
@@ -90,7 +92,8 @@ spec:
          - source $(ILCSOFT_version)/init_ilcsoft.sh;
            cd $(DISK);
            echo "-- Running DDSim $(SIM_MODEL) ...";
-           ddsim --outputFile ./pion-shower-3.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ; 
+           ddsim --outputFile ./pion-shower-3.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ;
+           Marlin create_root_tree.xml --global.LCIOInputFiles=./pion-shower-3.slcio --MyAIDAProcessor.FileName=pion-shower-3;
         volumeMounts:
          - mountPath: /mnt
            name: vol1
@@ -110,7 +113,7 @@ spec:
   template:
     spec:
       containers:
-      - name: photon
+      - name: pion
         image: ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre
         env:
         - name: ILCSOFT_version
@@ -124,7 +127,8 @@ spec:
          - source $(ILCSOFT_version)/init_ilcsoft.sh;
            cd $(DISK);
            echo "-- Running DDSim $(SIM_MODEL) ...";
-           ddsim --outputFile ./pion-shower-4.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ; 
+           ddsim --outputFile ./pion-shower-4.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ;
+           Marlin create_root_tree.xml --global.LCIOInputFiles=./pion-shower-4.slcio --MyAIDAProcessor.FileName=pion-shower-4;
         volumeMounts:
          - mountPath: /mnt
            name: vol1
@@ -144,7 +148,7 @@ spec:
   template:
     spec:
       containers:
-      - name: photon
+      - name: pion
         image: ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre
         env:
         - name: ILCSOFT_version
@@ -158,7 +162,8 @@ spec:
          - source $(ILCSOFT_version)/init_ilcsoft.sh;
            cd $(DISK);
            echo "-- Running DDSim $(SIM_MODEL) ...";
-           ddsim --outputFile ./pion-shower-5.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ; 
+           ddsim --outputFile ./pion-shower-5.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ;
+           Marlin create_root_tree.xml --global.LCIOInputFiles=./pion-shower-5.slcio --MyAIDAProcessor.FileName=pion-shower-5;
         volumeMounts:
          - mountPath: /mnt
            name: vol1
@@ -178,7 +183,7 @@ spec:
   template:
     spec:
       containers:
-      - name: photon
+      - name: pion
         image: ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre
         env:
         - name: ILCSOFT_version
@@ -192,7 +197,8 @@ spec:
          - source $(ILCSOFT_version)/init_ilcsoft.sh;
            cd $(DISK);
            echo "-- Running DDSim $(SIM_MODEL) ...";
-           ddsim --outputFile ./pion-shower-6.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ; 
+           ddsim --outputFile ./pion-shower-6.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ;
+           Marlin create_root_tree.xml --global.LCIOInputFiles=./pion-shower-6.slcio --MyAIDAProcessor.FileName=pion-shower-6;
         volumeMounts:
          - mountPath: /mnt
            name: vol1
@@ -212,7 +218,7 @@ spec:
   template:
     spec:
       containers:
-      - name: photon
+      - name: pion
         image: ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre
         env:
         - name: ILCSOFT_version
@@ -226,7 +232,8 @@ spec:
          - source $(ILCSOFT_version)/init_ilcsoft.sh;
            cd $(DISK);
            echo "-- Running DDSim $(SIM_MODEL) ...";
-           ddsim --outputFile ./pion-shower-7.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ; 
+           ddsim --outputFile ./pion-shower-7.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ;
+           Marlin create_root_tree.xml --global.LCIOInputFiles=./pion-shower-7.slcio --MyAIDAProcessor.FileName=pion-shower-7;
         volumeMounts:
          - mountPath: /mnt
            name: vol1
@@ -246,7 +253,7 @@ spec:
   template:
     spec:
       containers:
-      - name: photon
+      - name: pion
         image: ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre
         env:
         - name: ILCSOFT_version
@@ -260,7 +267,8 @@ spec:
          - source $(ILCSOFT_version)/init_ilcsoft.sh;
            cd $(DISK);
            echo "-- Running DDSim $(SIM_MODEL) ...";
-           ddsim --outputFile ./pion-shower-8.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ; 
+           ddsim --outputFile ./pion-shower-8.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ;
+           Marlin create_root_tree.xml --global.LCIOInputFiles=./pion-shower-8.slcio --MyAIDAProcessor.FileName=pion-shower-8;
         volumeMounts:
          - mountPath: /mnt
            name: vol1
@@ -280,7 +288,7 @@ spec:
   template:
     spec:
       containers:
-      - name: photon
+      - name: pion
         image: ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre
         env:
         - name: ILCSOFT_version
@@ -294,7 +302,8 @@ spec:
          - source $(ILCSOFT_version)/init_ilcsoft.sh;
            cd $(DISK);
            echo "-- Running DDSim $(SIM_MODEL) ...";
-           ddsim --outputFile ./pion-shower-9.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ; 
+           ddsim --outputFile ./pion-shower-9.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ;
+           Marlin create_root_tree.xml --global.LCIOInputFiles=./pion-shower-9.slcio --MyAIDAProcessor.FileName=pion-shower-9;
         volumeMounts:
          - mountPath: /mnt
            name: vol1
@@ -314,7 +323,7 @@ spec:
   template:
     spec:
       containers:
-      - name: photon
+      - name: pion
         image: ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre
         env:
         - name: ILCSOFT_version
@@ -328,7 +337,8 @@ spec:
          - source $(ILCSOFT_version)/init_ilcsoft.sh;
            cd $(DISK);
            echo "-- Running DDSim $(SIM_MODEL) ...";
-           ddsim --outputFile ./pion-shower-10.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ; 
+           ddsim --outputFile ./pion-shower-10.slcio --compactFile $(DISK)/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py ;
+           Marlin create_root_tree.xml --global.LCIOInputFiles=./pion-shower-10.slcio --MyAIDAProcessor.FileName=pion-shower-10;
         volumeMounts:
          - mountPath: /mnt
            name: vol1
