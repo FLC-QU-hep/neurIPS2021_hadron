@@ -62,8 +62,27 @@ These jobs will create Linear-Collider-Input-Output (LCIO) and root files, conta
 
 We need to do:
 
-1. Read/stream the root files and convert all calorimeter hits into `48 x 25 x 25` numpy array.
+1. Read/stream the root files and convert all calorimeter hits into `48 x 48 x 48` numpy array.
 2. Write these arrays into a `hdf5` file. 
+
+We have a different workflow (with different docker image) for this stage:
+
+```console
+engin@local: ~$ cat convert_hdf5.jinja2 | render_template > convert_hdf5_jobs.yaml
+engin@local: ~$ rancher kubectl apply -f convert_hdf5_jobs.yaml -n ilc
+job.batch/hdf5-pions-1 created
+job.batch/hdf5-pions-2 created
+job.batch/hdf5-pions-3 created
+job.batch/hdf5-pions-4 created
+job.batch/hdf5-pions-5 created
+job.batch/hdf5-pions-6 created
+job.batch/hdf5-pions-7 created
+job.batch/hdf5-pions-8 created
+job.batch/hdf5-pions-9 created
+job.batch/hdf5-pions-10 created
+```
+
+We further cut the size of transverse grid to `25x25` in order to avoid too low spacity. This stage is done in the data loader.  
 
 
 

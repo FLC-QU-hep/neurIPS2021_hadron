@@ -172,8 +172,8 @@ if __name__=="__main__":
         ## execute cpu jobs
         print("Creating {}-process pool".format(ncpu) )
         pool = mp.Pool(ncpu)
-        evts = np.arange(0, x.shape[0], batch)
-        #evts = np.arange(0, 65001, batch)
+        evts = np.arange(0, x.shape[0] + 1, batch)
+        #evts = np.arange(0, 10001, batch)
         tmp = [[evts[k-1],evts[k]] for k in range(1,len(evts))]
         events = np.vstack(tmp)
 
