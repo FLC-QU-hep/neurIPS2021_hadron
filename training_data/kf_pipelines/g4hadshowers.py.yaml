@@ -1,0 +1,75 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: ildeventgen-
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9, pipelines.kubeflow.org/pipeline_compilation_time: '2022-01-07T13:48:12.416227',
+    pipelines.kubeflow.org/pipeline_spec: '{"description": "Event Simulation and Reconstruction",
+      "name": "ILDEventGen"}'}
+  labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9}
+spec:
+  entrypoint: ildeventgen
+  templates:
+  - name: create-pvc
+    resource:
+      action: create
+      manifest: |
+        apiVersion: v1
+        kind: PersistentVolumeClaim
+        metadata:
+          name: '{{workflow.name}}-my-pvc'
+        spec:
+          accessModes:
+          - ReadWriteOnce
+          resources:
+            requests:
+              storage: 15Gi
+    outputs:
+      parameters:
+      - name: create-pvc-manifest
+        valueFrom: {jsonPath: '{}'}
+      - name: create-pvc-name
+        valueFrom: {jsonPath: '{.metadata.name}'}
+      - name: create-pvc-size
+        valueFrom: {jsonPath: '{.status.capacity.storage}'}
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.9
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+  - name: gen
+    container:
+      args: ['git clone --branch postpaper https://github.com/FLC-QU-hep/neurIPS2021_hadron.git  &&                                 source
+          /home/ilc/ilcsoft/v02-01-pre/init_ilcsoft.sh &&                                 cd
+          $PWD/neurIPS2021_hadron/training_data/kf_pipelines/ && chmod +x ./runSim.sh
+          && ./runSim.sh']
+      command: [/bin/bash, -c]
+      image: ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre
+      volumeMounts:
+      - {mountPath: /mnt, name: create-pvc}
+    inputs:
+      parameters:
+      - {name: create-pvc-name}
+    outputs:
+      artifacts:
+      - {name: gen-data, path: /mnt/logFile.txt}
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.9
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+    volumes:
+    - name: create-pvc
+      persistentVolumeClaim: {claimName: '{{inputs.parameters.create-pvc-name}}'}
+  - name: ildeventgen
+    dag:
+      tasks:
+      - {name: create-pvc, template: create-pvc}
+      - name: gen
+        template: gen
+        dependencies: [create-pvc]
+        arguments:
+          parameters:
+          - {name: create-pvc-name, value: '{{tasks.create-pvc.outputs.parameters.create-pvc-name}}'}
+  arguments:
+    parameters: []
+  serviceAccountName: pipeline-runner
