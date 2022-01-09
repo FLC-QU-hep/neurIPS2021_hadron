@@ -9,7 +9,7 @@ cp ../* ./ILDConfig/StandardConfig/production
 cd ./ILDConfig/StandardConfig/production
 
 echo "-- Running DDSim $(SIM_MODEL) ..."
-ddsim  ddsim --outputFile ./pion-shower-{{ n }}.slcio \
+ddsim --outputFile ./pion-shower-{{ n }}.slcio \
              --compactFile ./compact/${SIM_MODEL}/${SIM_MODEL}.xml \
              --steeringFile ddsim_steer_gun.py 
 
