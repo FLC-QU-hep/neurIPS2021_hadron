@@ -10,4 +10,4 @@ cd ./ILDConfig/StandardConfig/production
 
 echo "-- Running DDSim..."
 ddsim --outputFile ./pion-shower.slcio --compactFile $lcgeo_DIR/ILD/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py 
-
+mv ./pion-shower.slcio /mnt

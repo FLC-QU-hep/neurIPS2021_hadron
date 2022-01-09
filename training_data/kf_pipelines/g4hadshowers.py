@@ -35,7 +35,7 @@ def sim(v):
                                 source /home/ilc/ilcsoft/v02-01-pre/init_ilcsoft.sh && \
                                 cd $PWD/neurIPS2021_hadron/training_data/kf_pipelines/ && chmod +x ./runSim.sh && ./runSim.sh'],
                     pvolumes={"/mnt": v.volume},
-                    file_outputs={'data': '/mnt/logFile.txt'},
+                    file_outputs={'data': '/mnt/pion-shower.slcio'},
     )    
 
 
