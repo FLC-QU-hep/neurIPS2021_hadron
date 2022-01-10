@@ -15,7 +15,7 @@ Marlin MarlinStdReco.xml --constant.lcgeo_DIR=$lcgeo_DIR \
         --constant.DetectorModel=${REC_MODEL} \
         --constant.OutputBaseName=pion-shower \
         --constant.RunBeamCalReco=false \
-        --global.LCIOInputFiles=$1
+        --global.LCIOInputFiles=/mnt/$1
 
 
 mv pion-shower_REC.slcio /mnt 
