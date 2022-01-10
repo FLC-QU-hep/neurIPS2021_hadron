@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
   generateName: ildeventgen-
-  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9, pipelines.kubeflow.org/pipeline_compilation_time: '2022-01-09T20:31:31.838616',
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9, pipelines.kubeflow.org/pipeline_compilation_time: '2022-01-10T14:41:28.210470',
     pipelines.kubeflow.org/pipeline_spec: '{"description": "Event Simulation and Reconstruction",
       "name": "ILDEventGen"}'}
   labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9}
@@ -36,7 +36,46 @@ spec:
         pipelines.kubeflow.org/kfp_sdk_version: 1.8.9
         pipelines.kubeflow.org/pipeline-sdk-type: kfp
         pipelines.kubeflow.org/enable_caching: "true"
-  - name: gen
+  - name: ildeventgen
+    dag:
+      tasks:
+      - {name: create-pvc, template: create-pvc}
+      - name: reconstruction
+        template: reconstruction
+        dependencies: [create-pvc, simulation]
+        arguments:
+          parameters:
+          - {name: create-pvc-name, value: '{{tasks.create-pvc.outputs.parameters.create-pvc-name}}'}
+          - {name: simulation-data, value: '{{tasks.simulation.outputs.parameters.simulation-data}}'}
+      - name: simulation
+        template: simulation
+        dependencies: [create-pvc]
+        arguments:
+          parameters:
+          - {name: create-pvc-name, value: '{{tasks.create-pvc.outputs.parameters.create-pvc-name}}'}
+  - name: reconstruction
+    container:
+      args: [echo, '{{inputs.parameters.simulation-data}}']
+      command: [/bin/bash, -c]
+      image: ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre
+      volumeMounts:
+      - {mountPath: /mnt, name: create-pvc}
+    inputs:
+      parameters:
+      - {name: create-pvc-name}
+      - {name: simulation-data}
+    outputs:
+      artifacts:
+      - {name: reconstruction-data, path: /mnt/pion-shower_REC.slcio}
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.9
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+    volumes:
+    - name: create-pvc
+      persistentVolumeClaim: {claimName: '{{inputs.parameters.create-pvc-name}}'}
+  - name: simulation
     container:
       args: ['git clone --branch postpaper https://github.com/FLC-QU-hep/neurIPS2021_hadron.git  &&                                 source
           /home/ilc/ilcsoft/v02-01-pre/init_ilcsoft.sh &&                                 cd
@@ -50,8 +89,11 @@ spec:
       parameters:
       - {name: create-pvc-name}
     outputs:
+      parameters:
+      - name: simulation-data
+        valueFrom: {path: /mnt/pion-shower.slcio}
       artifacts:
-      - {name: gen-data, path: $PWD/neurIPS2021_hadron/training_data/kf_pipelines/pion-shower.slcio}
+      - {name: simulation-data, path: /mnt/pion-shower.slcio}
     metadata:
       labels:
         pipelines.kubeflow.org/kfp_sdk_version: 1.8.9
@@ -60,16 +102,6 @@ spec:
     volumes:
     - name: create-pvc
       persistentVolumeClaim: {claimName: '{{inputs.parameters.create-pvc-name}}'}
-  - name: ildeventgen
-    dag:
-      tasks:
-      - {name: create-pvc, template: create-pvc}
-      - name: gen
-        template: gen
-        dependencies: [create-pvc]
-        arguments:
-          parameters:
-          - {name: create-pvc-name, value: '{{tasks.create-pvc.outputs.parameters.create-pvc-name}}'}
   arguments:
     parameters: []
   serviceAccountName: pipeline-runner

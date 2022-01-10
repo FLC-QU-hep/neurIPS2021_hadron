@@ -28,7 +28,7 @@ def create_vol():
 
 def sim(v):
     return dsl.ContainerOp(
-                    name='Gen',
+                    name='Simulation',
                     image='ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre',
                     command=[ '/bin/bash', '-c'],
                     arguments=['git clone --branch postpaper https://github.com/FLC-QU-hep/neurIPS2021_hadron.git  && \
@@ -38,6 +38,17 @@ def sim(v):
                     file_outputs={'data': '/mnt/pion-shower.slcio'},
     )    
 
+def rec(v, sim_out):
+    return dsl.ContainerOp(
+                    name='Reconstruction',
+                    image='ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre',
+                    command=[ '/bin/bash', '-c'],
+                    arguments=['git clone --branch postpaper https://github.com/FLC-QU-hep/neurIPS2021_hadron.git  && \
+                                source /home/ilc/ilcsoft/v02-01-pre/init_ilcsoft.sh && \
+                                cd $PWD/neurIPS2021_hadron/training_data/kf_pipelines/ && chmod +x ./runRec.sh && ./runRec.sh', sim_out],
+                    pvolumes={"/mnt": v.volume},
+                    file_outputs={'data': '/mnt/pion-shower_REC.slcio'},
+    )   
 
  
 
@@ -50,7 +61,9 @@ def sequential_pipeline():
     """A pipeline with sequential steps."""
     
     r = create_vol()
-    simout = sim(r)
+    simulation = sim(r)
+    recost = rec(r, simulation.output)
+
    
 
    
