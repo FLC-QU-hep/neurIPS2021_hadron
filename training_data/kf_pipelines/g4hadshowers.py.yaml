@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
   generateName: ildeventgen-
-  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9, pipelines.kubeflow.org/pipeline_compilation_time: '2022-01-10T14:41:28.210470',
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9, pipelines.kubeflow.org/pipeline_compilation_time: '2022-01-10T14:47:33.668146',
     pipelines.kubeflow.org/pipeline_spec: '{"description": "Event Simulation and Reconstruction",
       "name": "ILDEventGen"}'}
   labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9}
@@ -55,7 +55,10 @@ spec:
           - {name: create-pvc-name, value: '{{tasks.create-pvc.outputs.parameters.create-pvc-name}}'}
   - name: reconstruction
     container:
-      args: [echo, '{{inputs.parameters.simulation-data}}']
+      args: ['git clone --branch postpaper https://github.com/FLC-QU-hep/neurIPS2021_hadron.git  &&                                 source
+          /home/ilc/ilcsoft/v02-01-pre/init_ilcsoft.sh &&                                 cd
+          $PWD/neurIPS2021_hadron/training_data/kf_pipelines/ && chmod +x ./runRec.sh
+          && ./runRec.sh', '{{inputs.parameters.simulation-data}}']
       command: [/bin/bash, -c]
       image: ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre
       volumeMounts:
