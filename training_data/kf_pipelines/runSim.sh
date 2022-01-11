@@ -8,7 +8,9 @@ git clone --branch v02-01-pre02 https://github.com/iLCSoft/ILDConfig.git
 cp ../* ./ILDConfig/StandardConfig/production
 cd ./ILDConfig/StandardConfig/production
 
+n=$(echo $RANDOM)
+
 echo "-- Running DDSim..."
-ddsim --outputFile ./pion-shower.slcio --compactFile $lcgeo_DIR/ILD/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py 
-mv ./pion-shower.slcio /mnt
-echo pion-shower.slcio > /mnt/simout
+ddsim --outputFile ./pion-shower_$n.slcio --compactFile $lcgeo_DIR/ILD/compact/${SIM_MODEL}/${SIM_MODEL}.xml --steeringFile ddsim_steer_gun.py 
+mv ./pion-shower_$n.slcio /mnt
+echo pion-shower_$n.slcio > /mnt/simout

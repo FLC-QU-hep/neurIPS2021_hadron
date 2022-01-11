@@ -33,6 +33,7 @@ def sim(v):
                     command=[ '/bin/bash', '-c'],
                     arguments=['git clone --branch postpaper https://github.com/FLC-QU-hep/neurIPS2021_hadron.git  && \
                                 source /home/ilc/ilcsoft/v02-01-pre/init_ilcsoft.sh && \
+                                echo $PWD && \
                                 cd $PWD/neurIPS2021_hadron/training_data/kf_pipelines/ && chmod +x ./runSim.sh && ./runSim.sh'],
                     pvolumes={"/mnt": v.volume},
                     file_outputs={'data': '/mnt/simout',},
@@ -43,11 +44,10 @@ def rec(v, simout_name):
                     name='Reconstruction',
                     image='ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre',
                     command=[ '/bin/bash', '-c'],
-                    arguments=['git clone --branch postpaper https://github.com/FLC-QU-hep/neurIPS2021_hadron.git  && \
+                    arguments=['git clone --branch postpaper https://github.com/FLC-QU-hep/neurIPS2021_hadron.git && \
                                 cd $PWD/neurIPS2021_hadron/training_data/kf_pipelines/ && \
                                 chmod +x ./runRec.sh && ./runRec.sh "$0"', simout_name ],
-                    pvolumes={"/mnt": v.volume},
-                    file_outputs={'data': '/mnt/pion-shower_REC.slcio'},
+                    pvolumes={"/mnt": v.volume}
     )   
 
  
