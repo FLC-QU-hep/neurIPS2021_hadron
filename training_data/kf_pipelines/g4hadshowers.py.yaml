@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
   generateName: ildeventgen-
-  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9, pipelines.kubeflow.org/pipeline_compilation_time: '2022-01-12T11:15:35.003164',
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9, pipelines.kubeflow.org/pipeline_compilation_time: '2022-01-12T11:55:35.786524',
     pipelines.kubeflow.org/pipeline_spec: '{"description": "Event Simulation and Reconstruction",
       "name": "ILDEventGen"}'}
   labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9}
@@ -12,9 +12,11 @@ spec:
   - name: hdf5-conversion
     container:
       args: ['git clone --branch postpaper https://github.com/FLC-QU-hep/neurIPS2021_hadron.git
-          &&                                 python create_hdf5.py --rootfile "$0"
-          --branch photonSIM --batchsize 50 --output "$0" --hcal True &&                                 mv
-          "$0".hdf5 /mnt && ls -ltrh /mnt', '{{inputs.parameters.simulation-root}}']
+          &&                                 cd $PWD/neurIPS2021_hadron/training_data/kf_pipelines/
+          && cp ../create_hdf5.py . &&                                 python create_hdf5.py
+          --rootfile /mnt/"$0" --branch photonSIM --batchsize 50 --output /mnt/"$0"
+          --hcal True &&                                 mv "$0".hdf5 /mnt && ls -ltrh
+          /mnt', '{{inputs.parameters.simulation-root}}']
       command: [/bin/bash, -c]
       image: engineren/pytorch:latest
       volumeMounts:
@@ -106,10 +108,9 @@ spec:
       persistentVolumeClaim: {claimName: '{{inputs.parameters.persistent-volume-name}}'}
   - name: simulation
     container:
-      args: ['git clone --branch postpaper https://github.com/FLC-QU-hep/neurIPS2021_hadron.git  &&                                 source
-          /home/ilc/ilcsoft/v02-01-pre/init_ilcsoft.sh &&                                 cd
+      args: ['git clone --branch postpaper https://github.com/FLC-QU-hep/neurIPS2021_hadron.git  &&                                 cd
           $PWD/neurIPS2021_hadron/training_data/kf_pipelines/ && chmod +x ./runSim.sh
-          && ./runSim.sh']
+          && ./runSim.sh &&                                 ls -ltrh /mnt']
       command: [/bin/bash, -c]
       image: ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre
       volumeMounts:

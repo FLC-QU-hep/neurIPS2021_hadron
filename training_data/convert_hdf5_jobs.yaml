@@ -17,7 +17,7 @@ spec:
         command: ["/bin/bash", "-c"]
         args: 
          - cd $(DISK);
-           python create_hdf5.py --rootfile 'pion-shower-1.root' --branch photonSIM --batchsize 50 --output pion-shower-1 --hcal True 
+           python create_hdf5.py --rootfile 'pion-shower-1.root' --branch pionSIM --batchsize 50 --output pion-shower-1 --hcal True 
         volumeMounts:
          - mountPath: /mnt
            name: vol1

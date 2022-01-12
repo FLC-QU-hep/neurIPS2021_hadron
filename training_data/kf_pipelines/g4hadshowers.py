@@ -32,8 +32,8 @@ def sim(v):
                     image='ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre',
                     command=[ '/bin/bash', '-c'],
                     arguments=['git clone --branch postpaper https://github.com/FLC-QU-hep/neurIPS2021_hadron.git  && \
-                                source /home/ilc/ilcsoft/v02-01-pre/init_ilcsoft.sh && \
-                                cd $PWD/neurIPS2021_hadron/training_data/kf_pipelines/ && chmod +x ./runSim.sh && ./runSim.sh'],
+                                cd $PWD/neurIPS2021_hadron/training_data/kf_pipelines/ && chmod +x ./runSim.sh && ./runSim.sh && \
+                                ls -ltrh /mnt'],
                     pvolumes={"/mnt": v.volume},
                     file_outputs={'lcio': '/mnt/simout',
                                    'root': '/mnt/simout_root'
@@ -58,7 +58,8 @@ def convert_hdf5(v, simout_root):
                     image='engineren/pytorch:latest',
                     command=[ '/bin/bash', '-c'],
                     arguments=['git clone --branch postpaper https://github.com/FLC-QU-hep/neurIPS2021_hadron.git && \
-                                python create_hdf5.py --rootfile "$0" --branch photonSIM --batchsize 50 --output "$0" --hcal True && \
+                                cd $PWD/neurIPS2021_hadron/training_data/kf_pipelines/ && cp ../create_hdf5.py . && \
+                                python create_hdf5.py --rootfile /mnt/"$0" --branch photonSIM --batchsize 50 --output /mnt/"$0" --hcal True && \
                                 mv "$0".hdf5 /mnt && ls -ltrh /mnt', simout_root],
                     pvolumes={"/mnt": v.volume}
     )   
