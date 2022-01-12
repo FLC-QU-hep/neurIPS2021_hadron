@@ -2,14 +2,60 @@ apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
   generateName: ildeventgen-
-  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9, pipelines.kubeflow.org/pipeline_compilation_time: '2022-01-11T17:21:13.080330',
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9, pipelines.kubeflow.org/pipeline_compilation_time: '2022-01-12T11:15:35.003164',
     pipelines.kubeflow.org/pipeline_spec: '{"description": "Event Simulation and Reconstruction",
       "name": "ILDEventGen"}'}
   labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9}
 spec:
   entrypoint: ildeventgen
   templates:
-  - name: create-pvc
+  - name: hdf5-conversion
+    container:
+      args: ['git clone --branch postpaper https://github.com/FLC-QU-hep/neurIPS2021_hadron.git
+          &&                                 python create_hdf5.py --rootfile "$0"
+          --branch photonSIM --batchsize 50 --output "$0" --hcal True &&                                 mv
+          "$0".hdf5 /mnt && ls -ltrh /mnt', '{{inputs.parameters.simulation-root}}']
+      command: [/bin/bash, -c]
+      image: engineren/pytorch:latest
+      volumeMounts:
+      - {mountPath: /mnt, name: persistent-volume}
+    inputs:
+      parameters:
+      - {name: persistent-volume-name}
+      - {name: simulation-root}
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.9
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+    volumes:
+    - name: persistent-volume
+      persistentVolumeClaim: {claimName: '{{inputs.parameters.persistent-volume-name}}'}
+  - name: ildeventgen
+    dag:
+      tasks:
+      - name: hdf5-conversion
+        template: hdf5-conversion
+        dependencies: [persistent-volume, simulation]
+        arguments:
+          parameters:
+          - {name: persistent-volume-name, value: '{{tasks.persistent-volume.outputs.parameters.persistent-volume-name}}'}
+          - {name: simulation-root, value: '{{tasks.simulation.outputs.parameters.simulation-root}}'}
+      - {name: persistent-volume, template: persistent-volume}
+      - name: reconstruction
+        template: reconstruction
+        dependencies: [persistent-volume, simulation]
+        arguments:
+          parameters:
+          - {name: persistent-volume-name, value: '{{tasks.persistent-volume.outputs.parameters.persistent-volume-name}}'}
+          - {name: simulation-lcio, value: '{{tasks.simulation.outputs.parameters.simulation-lcio}}'}
+      - name: simulation
+        template: simulation
+        dependencies: [persistent-volume]
+        arguments:
+          parameters:
+          - {name: persistent-volume-name, value: '{{tasks.persistent-volume.outputs.parameters.persistent-volume-name}}'}
+  - name: persistent-volume
     resource:
       action: create
       manifest: |
@@ -25,83 +71,69 @@ spec:
               storage: 15Gi
     outputs:
       parameters:
-      - name: create-pvc-manifest
+      - name: persistent-volume-manifest
         valueFrom: {jsonPath: '{}'}
-      - name: create-pvc-name
+      - name: persistent-volume-name
         valueFrom: {jsonPath: '{.metadata.name}'}
-      - name: create-pvc-size
+      - name: persistent-volume-size
         valueFrom: {jsonPath: '{.status.capacity.storage}'}
     metadata:
       labels:
         pipelines.kubeflow.org/kfp_sdk_version: 1.8.9
         pipelines.kubeflow.org/pipeline-sdk-type: kfp
         pipelines.kubeflow.org/enable_caching: "true"
-  - name: ildeventgen
-    dag:
-      tasks:
-      - {name: create-pvc, template: create-pvc}
-      - name: reconstruction
-        template: reconstruction
-        dependencies: [create-pvc, simulation]
-        arguments:
-          parameters:
-          - {name: create-pvc-name, value: '{{tasks.create-pvc.outputs.parameters.create-pvc-name}}'}
-          - {name: simulation-data, value: '{{tasks.simulation.outputs.parameters.simulation-data}}'}
-      - name: simulation
-        template: simulation
-        dependencies: [create-pvc]
-        arguments:
-          parameters:
-          - {name: create-pvc-name, value: '{{tasks.create-pvc.outputs.parameters.create-pvc-name}}'}
   - name: reconstruction
     container:
       args: ['git clone --branch postpaper https://github.com/FLC-QU-hep/neurIPS2021_hadron.git
           &&                                 cd $PWD/neurIPS2021_hadron/training_data/kf_pipelines/
           &&                                 chmod +x ./runRec.sh && ./runRec.sh "$0"',
-        '{{inputs.parameters.simulation-data}}']
+        '{{inputs.parameters.simulation-lcio}}']
       command: [/bin/bash, -c]
       image: ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre
       volumeMounts:
-      - {mountPath: /mnt, name: create-pvc}
+      - {mountPath: /mnt, name: persistent-volume}
     inputs:
       parameters:
-      - {name: create-pvc-name}
-      - {name: simulation-data}
+      - {name: persistent-volume-name}
+      - {name: simulation-lcio}
     metadata:
       labels:
         pipelines.kubeflow.org/kfp_sdk_version: 1.8.9
         pipelines.kubeflow.org/pipeline-sdk-type: kfp
         pipelines.kubeflow.org/enable_caching: "true"
     volumes:
-    - name: create-pvc
-      persistentVolumeClaim: {claimName: '{{inputs.parameters.create-pvc-name}}'}
+    - name: persistent-volume
+      persistentVolumeClaim: {claimName: '{{inputs.parameters.persistent-volume-name}}'}
   - name: simulation
     container:
       args: ['git clone --branch postpaper https://github.com/FLC-QU-hep/neurIPS2021_hadron.git  &&                                 source
-          /home/ilc/ilcsoft/v02-01-pre/init_ilcsoft.sh &&                                 echo
-          $PWD &&                                 cd $PWD/neurIPS2021_hadron/training_data/kf_pipelines/
-          && chmod +x ./runSim.sh && ./runSim.sh']
+          /home/ilc/ilcsoft/v02-01-pre/init_ilcsoft.sh &&                                 cd
+          $PWD/neurIPS2021_hadron/training_data/kf_pipelines/ && chmod +x ./runSim.sh
+          && ./runSim.sh']
       command: [/bin/bash, -c]
       image: ilcsoft/ilcsoft-centos7-gcc8.2:v02-01-pre
       volumeMounts:
-      - {mountPath: /mnt, name: create-pvc}
+      - {mountPath: /mnt, name: persistent-volume}
     inputs:
       parameters:
-      - {name: create-pvc-name}
+      - {name: persistent-volume-name}
     outputs:
       parameters:
-      - name: simulation-data
+      - name: simulation-lcio
         valueFrom: {path: /mnt/simout}
+      - name: simulation-root
+        valueFrom: {path: /mnt/simout_root}
       artifacts:
-      - {name: simulation-data, path: /mnt/simout}
+      - {name: simulation-lcio, path: /mnt/simout}
+      - {name: simulation-root, path: /mnt/simout_root}
     metadata:
       labels:
         pipelines.kubeflow.org/kfp_sdk_version: 1.8.9
         pipelines.kubeflow.org/pipeline-sdk-type: kfp
         pipelines.kubeflow.org/enable_caching: "true"
     volumes:
-    - name: create-pvc
-      persistentVolumeClaim: {claimName: '{{inputs.parameters.create-pvc-name}}'}
+    - name: persistent-volume
+      persistentVolumeClaim: {claimName: '{{inputs.parameters.persistent-volume-name}}'}
   arguments:
     parameters: []
   serviceAccountName: pipeline-runner

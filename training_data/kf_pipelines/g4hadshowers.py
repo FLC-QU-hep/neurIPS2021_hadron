@@ -20,7 +20,7 @@ from kfp import dsl
 
 def create_vol():
     return dsl.VolumeOp(
-        name="create-pvc",
+        name="persistent-volume",
         resource_name="my-pvc",
         modes=dsl.VOLUME_MODE_RWO,
         size="15Gi"
@@ -33,10 +33,11 @@ def sim(v):
                     command=[ '/bin/bash', '-c'],
                     arguments=['git clone --branch postpaper https://github.com/FLC-QU-hep/neurIPS2021_hadron.git  && \
                                 source /home/ilc/ilcsoft/v02-01-pre/init_ilcsoft.sh && \
-                                echo $PWD && \
                                 cd $PWD/neurIPS2021_hadron/training_data/kf_pipelines/ && chmod +x ./runSim.sh && ./runSim.sh'],
                     pvolumes={"/mnt": v.volume},
-                    file_outputs={'data': '/mnt/simout',},
+                    file_outputs={'lcio': '/mnt/simout',
+                                   'root': '/mnt/simout_root'
+                    },
     )    
 
 def rec(v, simout_name):
@@ -50,7 +51,17 @@ def rec(v, simout_name):
                     pvolumes={"/mnt": v.volume}
     )   
 
- 
+
+def convert_hdf5(v, simout_root):
+    return dsl.ContainerOp(
+                    name='hdf5 conversion',
+                    image='engineren/pytorch:latest',
+                    command=[ '/bin/bash', '-c'],
+                    arguments=['git clone --branch postpaper https://github.com/FLC-QU-hep/neurIPS2021_hadron.git && \
+                                python create_hdf5.py --rootfile "$0" --branch photonSIM --batchsize 50 --output "$0" --hcal True && \
+                                mv "$0".hdf5 /mnt && ls -ltrh /mnt', simout_root],
+                    pvolumes={"/mnt": v.volume}
+    )   
 
 @dsl.pipeline(
     name='ILDEventGen',
@@ -62,7 +73,8 @@ def sequential_pipeline():
     
     r = create_vol()
     simulation = sim(r)
-    recost = rec(r, simulation.output)
+    recost = rec(r, simulation.outputs['lcio'])
+    hdf5 = convert_hdf5(r, simulation.outputs['root'])
 
    
 
