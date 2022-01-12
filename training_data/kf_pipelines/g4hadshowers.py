@@ -61,7 +61,7 @@ def convert_hdf5(v, simout_root):
                                 cd $PWD/neurIPS2021_hadron/training_data/kf_pipelines/ && cp ../create_hdf5.py . && \
                                 FILENAME=$(echo "$0" | cut -d"/" -f4 | cut -d"." -f1) && \
                                 python create_hdf5.py --rootfile "$0" --branch pionSIM --batchsize 1 --output $FILENAME --hcal True && \
-                                RUN=(echo "$0" | cut -d"/" -f3) && \
+                                RUN=$(echo "$0" | cut -d"/" -f3) && \
                                 mv $FILENAME.hdf5 /mnt/$RUN && \
                                 ls -ltrh /mnt', simout_root],
                     pvolumes={"/mnt": v.volume}

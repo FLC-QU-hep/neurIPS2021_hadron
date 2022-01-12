@@ -15,9 +15,9 @@ echo "-- Running Reconstruction--"
 
 Marlin MarlinStdReco.xml --constant.lcgeo_DIR=$lcgeo_DIR \
         --constant.DetectorModel=${REC_MODEL} \
-        --constant.OutputBaseName=pion_shower_$run \
+        --constant.OutputBaseName=pion_shower-$run \
         --constant.RunBeamCalReco=false \
         --global.LCIOInputFiles=$1
 
 
-mv pion_shower_$run_REC.slcio /mnt/$run
+mv pion_shower-$run\_REC.slcio /mnt/$run

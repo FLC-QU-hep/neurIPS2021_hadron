@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
   generateName: ildeventgen-
-  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9, pipelines.kubeflow.org/pipeline_compilation_time: '2022-01-12T14:36:00.921842',
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9, pipelines.kubeflow.org/pipeline_compilation_time: '2022-01-12T15:05:19.380094',
     pipelines.kubeflow.org/pipeline_spec: '{"description": "Event Simulation and Reconstruction",
       "name": "ILDEventGen"}'}
   labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9}
@@ -16,7 +16,7 @@ spec:
           && cp ../create_hdf5.py . &&                                 FILENAME=$(echo
           "$0" | cut -d"/" -f4 | cut -d"." -f1) &&                                 python
           create_hdf5.py --rootfile "$0" --branch pionSIM --batchsize 1 --output $FILENAME
-          --hcal True &&                                 RUN=(echo $1 | cut -d"/"
+          --hcal True &&                                 RUN=$(echo "$0" | cut -d"/"
           -f3) &&                                 mv $FILENAME.hdf5 /mnt/$RUN &&                                 ls
           -ltrh /mnt', '{{inputs.parameters.simulation-root}}']
       command: [/bin/bash, -c]
