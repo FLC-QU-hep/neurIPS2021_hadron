@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
   generateName: ildeventgen-
-  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9, pipelines.kubeflow.org/pipeline_compilation_time: '2022-01-12T13:32:30.330657',
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9, pipelines.kubeflow.org/pipeline_compilation_time: '2022-01-12T14:36:00.921842',
     pipelines.kubeflow.org/pipeline_spec: '{"description": "Event Simulation and Reconstruction",
       "name": "ILDEventGen"}'}
   labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9}
@@ -13,9 +13,12 @@ spec:
     container:
       args: ['git clone --branch postpaper https://github.com/FLC-QU-hep/neurIPS2021_hadron.git
           &&                                 cd $PWD/neurIPS2021_hadron/training_data/kf_pipelines/
-          && cp ../create_hdf5.py . &&                                 python create_hdf5.py
-          --rootfile /mnt/"$0" --branch pionSIM --batchsize 1 --output /mnt/"$0" --hcal
-          True &&                                 ls -ltrh /mnt', '{{inputs.parameters.simulation-root}}']
+          && cp ../create_hdf5.py . &&                                 FILENAME=$(echo
+          "$0" | cut -d"/" -f4 | cut -d"." -f1) &&                                 python
+          create_hdf5.py --rootfile "$0" --branch pionSIM --batchsize 1 --output $FILENAME
+          --hcal True &&                                 RUN=(echo $1 | cut -d"/"
+          -f3) &&                                 mv $FILENAME.hdf5 /mnt/$RUN &&                                 ls
+          -ltrh /mnt', '{{inputs.parameters.simulation-root}}']
       command: [/bin/bash, -c]
       image: engineren/pytorch:latest
       volumeMounts:
@@ -120,12 +123,12 @@ spec:
     outputs:
       parameters:
       - name: simulation-lcio
-        valueFrom: {path: /mnt/simout}
+        valueFrom: {path: /mnt/lcio_path}
       - name: simulation-root
-        valueFrom: {path: /mnt/simout_root}
+        valueFrom: {path: /mnt/root_path}
       artifacts:
-      - {name: simulation-lcio, path: /mnt/simout}
-      - {name: simulation-root, path: /mnt/simout_root}
+      - {name: simulation-lcio, path: /mnt/lcio_path}
+      - {name: simulation-root, path: /mnt/root_path}
     metadata:
       labels:
         pipelines.kubeflow.org/kfp_sdk_version: 1.8.9
