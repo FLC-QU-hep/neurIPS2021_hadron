@@ -9,13 +9,15 @@ cp ../* ./ILDConfig/StandardConfig/production
 cd ./ILDConfig/StandardConfig/production
 mv ./AHcalDigi.xml ./CaloDigi
 
+run=$(echo $1 | cut -d'/' -f3 )
+
 echo "-- Running Reconstruction--"
 
 Marlin MarlinStdReco.xml --constant.lcgeo_DIR=$lcgeo_DIR \
         --constant.DetectorModel=${REC_MODEL} \
-        --constant.OutputBaseName=$1 \
+        --constant.OutputBaseName=pion_shower_$run \
         --constant.RunBeamCalReco=false \
-        --global.LCIOInputFiles=/mnt/$1
+        --global.LCIOInputFiles=$1
 
 
-mv $1_REC.slcio /mnt 
+mv $1_REC.slcio $1 

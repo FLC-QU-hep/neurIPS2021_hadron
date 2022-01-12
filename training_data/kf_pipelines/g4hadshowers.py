@@ -35,8 +35,8 @@ def sim(v):
                                 cd $PWD/neurIPS2021_hadron/training_data/kf_pipelines/ && chmod +x ./runSim.sh && ./runSim.sh && \
                                 ls -ltrh /mnt'],
                     pvolumes={"/mnt": v.volume},
-                    file_outputs={'lcio': '/mnt/simout',
-                                   'root': '/mnt/simout_root'
+                    file_outputs={'lcio': '/mnt/lcio_path',
+                                   'root': '/mnt/root_path'
                     },
     )    
 
@@ -59,10 +59,17 @@ def convert_hdf5(v, simout_root):
                     command=[ '/bin/bash', '-c'],
                     arguments=['git clone --branch postpaper https://github.com/FLC-QU-hep/neurIPS2021_hadron.git && \
                                 cd $PWD/neurIPS2021_hadron/training_data/kf_pipelines/ && cp ../create_hdf5.py . && \
-                                python create_hdf5.py --rootfile /mnt/"$0" --branch photonSIM --batchsize 50 --output /mnt/"$0" --hcal True && \
-                                mv "$0".hdf5 /mnt && ls -ltrh /mnt', simout_root],
+                                FILENAME=$(echo "$0" | cut -d"/" -f4 | cut -d"." -f1) && \
+                                python create_hdf5.py --rootfile "$0" --branch pionSIM --batchsize 1 --output $FILENAME --hcal True && \
+                                RUN=(echo $1 | cut -d'/' -f3) && \
+                                mv $FILENAME.hdf5 /mnt/$RUN && \
+                                ls -ltrh /mnt', simout_root],
                     pvolumes={"/mnt": v.volume}
     )   
+
+def data_quality(v):
+
+
 
 @dsl.pipeline(
     name='ILDEventGen',
