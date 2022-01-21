@@ -16,6 +16,7 @@
 
 import kfp
 from kfp import dsl
+from kfp.components import InputPath, InputTextFile, InputBinaryFile, OutputPath, OutputTextFile, OutputBinaryFile
 
 
 def create_vol():
@@ -52,21 +53,31 @@ def rec(v, simout_name):
     )   
 
 
-def convert_hdf5(v, simout_root):
+def convert_hdf5(v, simout_root, file_name):
     return dsl.ContainerOp(
                     name='hdf5 conversion',
                     image='engineren/pytorch:latest',
                     command=[ '/bin/bash', '-c'],
                     arguments=['git clone --branch postpaper https://github.com/FLC-QU-hep/neurIPS2021_hadron.git && \
                                 cd $PWD/neurIPS2021_hadron/training_data/kf_pipelines/ && cp ../create_hdf5.py . && \
-                                FILENAME=$(echo "$0" | cut -d"/" -f4 | cut -d"." -f1) && \
-                                python create_hdf5.py --rootfile "$0" --branch pionSIM --batchsize 1 --output $FILENAME --hcal True && \
+                                python create_hdf5.py --rootfile "$0" --branch pionSIM --batchsize 1 --output pion-shower-"$1" --hcal True && \
                                 RUN=$(echo "$0" | cut -d"/" -f3) && \
-                                mv $FILENAME.hdf5 /mnt/$RUN && \
-                                ls -ltrh /mnt', simout_root],
-                    pvolumes={"/mnt": v.volume}
+                                cp pion-shower-"$1".hdf5 /mnt/$RUN && cp pion-shower-"$1".hdf5 /tmp', simout_root, file_name],
+                    pvolumes={"/mnt": v.volume},
+                    file_outputs = {
+                        'data': '/tmp/pion-shower-'+file_name+'.hdf5',
+                    }
     )   
 
+
+def train(v, hdf5_data):
+    return dsl.ContainerOp(
+                    name='train',
+                    image='engineren/pytorch:latest',
+                    command=[ '/bin/bash', '-c'],
+                    arguments=['echo "$0" && python -c "import torch; print(torch.__version__)" ', hdf5_data],
+                    pvolumes={"/mnt": v.volume}
+    )   
 
 
 
@@ -82,8 +93,10 @@ def sequential_pipeline():
     r = create_vol()
     simulation = sim(r)
     recost = rec(r, simulation.outputs['lcio'])
-    hdf5 = convert_hdf5(r, simulation.outputs['root'])
-
+    hdf5 = convert_hdf5(r, simulation.outputs['root'], "p1")
+    
+    training_data = dsl.InputArgumentPath(hdf5.output) 
+    tr = train(r, training_data)
    
 
    

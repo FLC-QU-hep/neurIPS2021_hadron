@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
   generateName: ildeventgen-
-  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9, pipelines.kubeflow.org/pipeline_compilation_time: '2022-01-12T15:05:19.380094',
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9, pipelines.kubeflow.org/pipeline_compilation_time: '2022-01-13T13:18:25.997122',
     pipelines.kubeflow.org/pipeline_spec: '{"description": "Event Simulation and Reconstruction",
       "name": "ILDEventGen"}'}
   labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.9}
@@ -13,12 +13,12 @@ spec:
     container:
       args: ['git clone --branch postpaper https://github.com/FLC-QU-hep/neurIPS2021_hadron.git
           &&                                 cd $PWD/neurIPS2021_hadron/training_data/kf_pipelines/
-          && cp ../create_hdf5.py . &&                                 FILENAME=$(echo
-          "$0" | cut -d"/" -f4 | cut -d"." -f1) &&                                 python
-          create_hdf5.py --rootfile "$0" --branch pionSIM --batchsize 1 --output $FILENAME
+          && cp ../create_hdf5.py . &&                                 python create_hdf5.py
+          --rootfile "$0" --branch pionSIM --batchsize 1 --output pion-shower-"$1"
           --hcal True &&                                 RUN=$(echo "$0" | cut -d"/"
-          -f3) &&                                 mv $FILENAME.hdf5 /mnt/$RUN &&                                 ls
-          -ltrh /mnt', '{{inputs.parameters.simulation-root}}']
+          -f3) &&                                 cp pion-shower-"$1".hdf5 /mnt/$RUN
+          && cp pion-shower-"$1".hdf5 /tmp', '{{inputs.parameters.simulation-root}}',
+        p1]
       command: [/bin/bash, -c]
       image: engineren/pytorch:latest
       volumeMounts:
@@ -27,6 +27,9 @@ spec:
       parameters:
       - {name: persistent-volume-name}
       - {name: simulation-root}
+    outputs:
+      artifacts:
+      - {name: hdf5-conversion-data, path: /tmp/pion-shower-p1.hdf5}
     metadata:
       labels:
         pipelines.kubeflow.org/kfp_sdk_version: 1.8.9
@@ -59,6 +62,14 @@ spec:
         arguments:
           parameters:
           - {name: persistent-volume-name, value: '{{tasks.persistent-volume.outputs.parameters.persistent-volume-name}}'}
+      - name: train
+        template: train
+        dependencies: [hdf5-conversion, persistent-volume]
+        arguments:
+          parameters:
+          - {name: persistent-volume-name, value: '{{tasks.persistent-volume.outputs.parameters.persistent-volume-name}}'}
+          artifacts:
+          - {name: hdf5-conversion-data, from: '{{tasks.hdf5-conversion.outputs.artifacts.hdf5-conversion-data}}'}
   - name: persistent-volume
     resource:
       action: create
@@ -129,6 +140,26 @@ spec:
       artifacts:
       - {name: simulation-lcio, path: /mnt/lcio_path}
       - {name: simulation-root, path: /mnt/root_path}
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.9
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+    volumes:
+    - name: persistent-volume
+      persistentVolumeClaim: {claimName: '{{inputs.parameters.persistent-volume-name}}'}
+  - name: train
+    container:
+      args: ['echo "$0" && python -c "import torch; print(torch.__version__)" ', /tmp/inputs/input-0/data]
+      command: [/bin/bash, -c]
+      image: engineren/pytorch:latest
+      volumeMounts:
+      - {mountPath: /mnt, name: persistent-volume}
+    inputs:
+      parameters:
+      - {name: persistent-volume-name}
+      artifacts:
+      - {name: hdf5-conversion-data, path: /tmp/inputs/input-0/data}
     metadata:
       labels:
         pipelines.kubeflow.org/kfp_sdk_version: 1.8.9

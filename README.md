@@ -84,6 +84,70 @@ job.batch/hdf5-pions-10 created
 
 We further cut the size of transverse grid to `25x25` in order to avoid too low spacity. This stage is done in the data loader.  
 
+### Kubeflow-Pipelines (Local)
+
+Kubeflow Pipelines are powerful. We can orchestrate simple, portable and scalable ML workflows. However, its installation process might be painful and require extra help from IT guys. Here we will create a local cluster and install Kubeflow-Pipelines
+
+Before you start, make sure you have:
+
+1. Docker with ~10GB RAM reserved
+2. Helm v3.6.3
+3. kind
+
+Create a local kind cluster
+```bash
+engin@local: ~$ kind create cluster --name kfp
+```
+
+it might take 1-2 minutes to spin up a local cluster.
+
+Install Kubeflow Pipelines from [`GetInData's Helm Chart`](https://getindata.com/blog/kubeflow-pipelines-running-5-minutes/)
+
+```bash
+engin@local: ~$ helm repo add getindata https://getindata.github.io/helm-charts/
+engin@local: ~$ helm install my-kubeflow-pipelines getindata/kubeflow-pipelines \
+  --version 1.6.2 --set platform.managedStorage.enabled=false \
+  --set platform.cloud=gcp  --set platform.gcp.proxyEnabled=false
+```
+
+Now be patient; it might take few minutes. Don't worry if you see `ml-pipeline` or `metadata-grpc-deployment` pods having a `CrashLoopBackOff` state for some time. They will become ready once their dependent services launch. 
+
+```bash
+engin@local: ~$ kubectl get pods
+NAME                                              READY   STATUS      RESTARTS   AGE
+cache-deployer-deployment-db7bbcff5-h6vl8         1/1     Running     12         11d
+cache-server-748468bbc9-cd5ls                     1/1     Running     10         11d
+metadata-envoy-7cd8b6db48-pdr27                   1/1     Running     10         11d
+metadata-grpc-deployment-7c9f96c75-c2jsj          1/1     Running     21         11d
+metadata-writer-78f67c4cf9-5wdcp                  1/1     Running     13         11d
+minio-6d84d56659-dcdkr                            1/1     Running     10         11d
+ml-pipeline-8588cf6787-ht226                      1/1     Running     30         11d
+ml-pipeline-persistenceagent-b6f5ff9f5-pjlz9      1/1     Running     17         11d
+ml-pipeline-scheduledworkflow-6854cdbb8d-cdd5q    1/1     Running     10         11d
+ml-pipeline-ui-cd89c5577-jrrg9                    1/1     Running     10         11d
+ml-pipeline-viewer-crd-6577dcfc8-zrvrg            1/1     Running     16         11d
+ml-pipeline-visualizationserver-f9895dfcd-pkcr7   1/1     Running     10         11d
+mysql-6989b8c6f6-mz2cl                            1/1     Running     10         11d
+workflow-controller-6d457d9fcf-w74q8              1/1     Running     15         11d
+```
+Now we can go ahead and access UI: 
+
+```bash
+engin@local: ~$ kubectl port-forward svc/ml-pipeline-ui 9000:80
+```
+Open this browser: `http://localhost:9000/#/pipelines`
+
+![UI][figures/kfp-UI.png]
+
+In order to pause the cluster
+
+```bash
+engin@local: ~$ docker ps 
+CONTAINER ID   IMAGE                  COMMAND                  CREATED       STATUS          PORTS                       NAMES
+486ef2b14930   kindest/node:v1.21.1   "/usr/local/bin/entr…"   11 days ago   Up 31 minutes   127.0.0.1:36553->6443/tcp   kfp-control-plane
+engin@local: ~$ docker stop 486ef2b14930
+```
+use `docker start CONTAINER ID` to start again. 
 
 
 
