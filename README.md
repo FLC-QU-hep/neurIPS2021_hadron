@@ -137,7 +137,7 @@ engin@local: ~$ kubectl port-forward svc/ml-pipeline-ui 9000:80
 ```
 Open this browser: `http://localhost:9000/#/pipelines`
 
-![UI][figures/kfp-UI.png]
+![UI](figures/kfp-UI.png)
 
 In order to pause the cluster
 
