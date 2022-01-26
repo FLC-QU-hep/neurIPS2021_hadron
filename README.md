@@ -149,7 +149,12 @@ engin@local: ~$ docker stop 486ef2b14930
 ```
 use `docker start CONTAINER ID` to start again. 
 
+Now we can compile our pipeline, defined `training_data/kf_pipelines/g4hadshowers.py`. 
 
+```bash
+engin@local: python g4hadshowers.py 
+```
+this will create `g4hadshowers.py.yaml`. Now you can go to UI and upload this yaml file.
 
 ## Running BIBAE code
 Pytorch version 1.8.0
