@@ -1,0 +1,311 @@
+
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hdf5-pions-1
+spec:
+  template:
+    spec:
+      containers:
+      - name: hdf5-pions
+        image: engineren/pytorch:latest
+        env:
+        - name: DISK
+          value: /mnt/production_pion_hcal/ILDConfig/StandardConfig/production
+        command: ["/bin/bash", "-c"]
+        args: 
+         - cd $(DISK);
+           python create_hdf5.py --rootfile 'pion-shower-1.root' --branch pionSIM --batchsize 50 --output pion-shower-1 --hcal True 
+        volumeMounts:
+         - mountPath: /mnt
+           name: vol1
+      restartPolicy: Never
+      nodeSelector:
+        guest: yalova
+      volumes:
+      - name: vol1
+        persistentVolumeClaim:
+          claimName: ilc-volume
+
+  backoffLimit: 1
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hdf5-pions-2
+spec:
+  template:
+    spec:
+      containers:
+      - name: hdf5-pions
+        image: engineren/pytorch:latest
+        env:
+        - name: DISK
+          value: /mnt/production_pion_hcal/ILDConfig/StandardConfig/production
+        command: ["/bin/bash", "-c"]
+        args: 
+         - cd $(DISK);
+           python create_hdf5.py --rootfile 'pion-shower-2.root' --branch photonSIM --batchsize 50 --output pion-shower-2 --hcal True 
+        volumeMounts:
+         - mountPath: /mnt
+           name: vol1
+      restartPolicy: Never
+      nodeSelector:
+        guest: bursa
+      volumes:
+      - name: vol1
+        persistentVolumeClaim:
+          claimName: ilc-volume
+
+  backoffLimit: 1
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hdf5-pions-3
+spec:
+  template:
+    spec:
+      containers:
+      - name: hdf5-pions
+        image: engineren/pytorch:latest
+        env:
+        - name: DISK
+          value: /mnt/production_pion_hcal/ILDConfig/StandardConfig/production
+        command: ["/bin/bash", "-c"]
+        args: 
+         - cd $(DISK);
+           python create_hdf5.py --rootfile 'pion-shower-3.root' --branch photonSIM --batchsize 50 --output pion-shower-3 --hcal True 
+        volumeMounts:
+         - mountPath: /mnt
+           name: vol1
+      restartPolicy: Never
+      nodeSelector:
+        guest: istanbul
+      volumes:
+      - name: vol1
+        persistentVolumeClaim:
+          claimName: ilc-volume
+
+  backoffLimit: 1
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hdf5-pions-4
+spec:
+  template:
+    spec:
+      containers:
+      - name: hdf5-pions
+        image: engineren/pytorch:latest
+        env:
+        - name: DISK
+          value: /mnt/production_pion_hcal/ILDConfig/StandardConfig/production
+        command: ["/bin/bash", "-c"]
+        args: 
+         - cd $(DISK);
+           python create_hdf5.py --rootfile 'pion-shower-4.root' --branch photonSIM --batchsize 50 --output pion-shower-4 --hcal True 
+        volumeMounts:
+         - mountPath: /mnt
+           name: vol1
+      restartPolicy: Never
+      nodeSelector:
+        guest: ankara
+      volumes:
+      - name: vol1
+        persistentVolumeClaim:
+          claimName: ilc-volume
+
+  backoffLimit: 1
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hdf5-pions-5
+spec:
+  template:
+    spec:
+      containers:
+      - name: hdf5-pions
+        image: engineren/pytorch:latest
+        env:
+        - name: DISK
+          value: /mnt/production_pion_hcal/ILDConfig/StandardConfig/production
+        command: ["/bin/bash", "-c"]
+        args: 
+         - cd $(DISK);
+           python create_hdf5.py --rootfile 'pion-shower-5.root' --branch photonSIM --batchsize 50 --output pion-shower-5 --hcal True 
+        volumeMounts:
+         - mountPath: /mnt
+           name: vol1
+      restartPolicy: Never
+      nodeSelector:
+        guest: izmir
+      volumes:
+      - name: vol1
+        persistentVolumeClaim:
+          claimName: ilc-volume
+
+  backoffLimit: 1
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hdf5-pions-6
+spec:
+  template:
+    spec:
+      containers:
+      - name: hdf5-pions
+        image: engineren/pytorch:latest
+        env:
+        - name: DISK
+          value: /mnt/production_pion_hcal/ILDConfig/StandardConfig/production
+        command: ["/bin/bash", "-c"]
+        args: 
+         - cd $(DISK);
+           python create_hdf5.py --rootfile 'pion-shower-6.root' --branch photonSIM --batchsize 50 --output pion-shower-6 --hcal True 
+        volumeMounts:
+         - mountPath: /mnt
+           name: vol1
+      restartPolicy: Never
+      nodeSelector:
+        guest: yalova
+      volumes:
+      - name: vol1
+        persistentVolumeClaim:
+          claimName: ilc-volume
+
+  backoffLimit: 1
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hdf5-pions-7
+spec:
+  template:
+    spec:
+      containers:
+      - name: hdf5-pions
+        image: engineren/pytorch:latest
+        env:
+        - name: DISK
+          value: /mnt/production_pion_hcal/ILDConfig/StandardConfig/production
+        command: ["/bin/bash", "-c"]
+        args: 
+         - cd $(DISK);
+           python create_hdf5.py --rootfile 'pion-shower-7.root' --branch photonSIM --batchsize 50 --output pion-shower-7 --hcal True 
+        volumeMounts:
+         - mountPath: /mnt
+           name: vol1
+      restartPolicy: Never
+      nodeSelector:
+        guest: bursa
+      volumes:
+      - name: vol1
+        persistentVolumeClaim:
+          claimName: ilc-volume
+
+  backoffLimit: 1
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hdf5-pions-8
+spec:
+  template:
+    spec:
+      containers:
+      - name: hdf5-pions
+        image: engineren/pytorch:latest
+        env:
+        - name: DISK
+          value: /mnt/production_pion_hcal/ILDConfig/StandardConfig/production
+        command: ["/bin/bash", "-c"]
+        args: 
+         - cd $(DISK);
+           python create_hdf5.py --rootfile 'pion-shower-8.root' --branch photonSIM --batchsize 50 --output pion-shower-8 --hcal True 
+        volumeMounts:
+         - mountPath: /mnt
+           name: vol1
+      restartPolicy: Never
+      nodeSelector:
+        guest: istanbul
+      volumes:
+      - name: vol1
+        persistentVolumeClaim:
+          claimName: ilc-volume
+
+  backoffLimit: 1
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hdf5-pions-9
+spec:
+  template:
+    spec:
+      containers:
+      - name: hdf5-pions
+        image: engineren/pytorch:latest
+        env:
+        - name: DISK
+          value: /mnt/production_pion_hcal/ILDConfig/StandardConfig/production
+        command: ["/bin/bash", "-c"]
+        args: 
+         - cd $(DISK);
+           python create_hdf5.py --rootfile 'pion-shower-9.root' --branch photonSIM --batchsize 50 --output pion-shower-9 --hcal True 
+        volumeMounts:
+         - mountPath: /mnt
+           name: vol1
+      restartPolicy: Never
+      nodeSelector:
+        guest: ankara
+      volumes:
+      - name: vol1
+        persistentVolumeClaim:
+          claimName: ilc-volume
+
+  backoffLimit: 1
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hdf5-pions-10
+spec:
+  template:
+    spec:
+      containers:
+      - name: hdf5-pions
+        image: engineren/pytorch:latest
+        env:
+        - name: DISK
+          value: /mnt/production_pion_hcal/ILDConfig/StandardConfig/production
+        command: ["/bin/bash", "-c"]
+        args: 
+         - cd $(DISK);
+           python create_hdf5.py --rootfile 'pion-shower-10.root' --branch photonSIM --batchsize 50 --output pion-shower-10 --hcal True 
+        volumeMounts:
+         - mountPath: /mnt
+           name: vol1
+      restartPolicy: Never
+      nodeSelector:
+        guest: izmir
+      volumes:
+      - name: vol1
+        persistentVolumeClaim:
+          claimName: ilc-volume
+
+  backoffLimit: 1

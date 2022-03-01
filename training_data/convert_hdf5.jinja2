@@ -1,0 +1,33 @@
+{% for n in range(1,11) %}
+{% set nodeList = ['yalova', 'bursa', 'istanbul', 'ankara', 'izmir']%}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hdf5-pions-{{ n }}
+spec:
+  template:
+    spec:
+      containers:
+      - name: hdf5-pions
+        image: engineren/pytorch:latest
+        env:
+        - name: DISK
+          value: /mnt/production_pion_hcal/ILDConfig/StandardConfig/production
+        command: ["/bin/bash", "-c"]
+        args: 
+         - cd $(DISK);
+           python create_hdf5.py --rootfile 'pion-shower-{{ n }}.root' --branch photonSIM --batchsize 50 --output pion-shower-{{ n }} --hcal True 
+        volumeMounts:
+         - mountPath: /mnt
+           name: vol1
+      restartPolicy: Never
+      nodeSelector:
+        guest: {{ nodeList[(n-1) % 5] }}
+      volumes:
+      - name: vol1
+        persistentVolumeClaim:
+          claimName: ilc-volume
+
+  backoffLimit: 1
+{%- endfor %}
